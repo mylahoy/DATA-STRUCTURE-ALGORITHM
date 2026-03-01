@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMate</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='config.css') }}">
+</head>
+<body onload="checkRole()">
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <span class="user-info">Logged in as <strong id="usernameDisplay">User</strong></span>
+            <span class="role-badge" id="roleBadge"></span>
+            <button class="logout-btn" onclick="logout()">Log Out</button>
+        </header>
+
+        <main>
+            <!-- Title -->
+            <h1 id="pageTitle">TaskMate</h1>
+            <p class="subtitle" id="pageSubtitle">Plan school and work tasks in one place with priorities and deadlines.</p>
+
+            <!-- Admin -->
+            <section id="adminPanel" class="admin-panel" style="display: none;">
+                <h2>Admin Dashboard</h2>
+                <p class="subtitle">Manage pending registrations and user accounts</p>
+                
+                <div class="admin-section">
+                    <h3>Pending User Registrations</h3>
+                    <div class="stats-grid">
+                        <div class="stat-box"><span>PENDING</span><strong id="pendingCount">0</strong></div>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" id="pendingSearch" placeholder="Search pending registrations..." oninput="filterPendingRequests()">
+                    </div>
+                    <ul id="request-list" class="request-list"></ul>
+                </div>
+                
+                <div class="admin-section">
+                    <h3>Registered Users</h3>
+                    <div class="stats-grid">
+                        <div class="stat-box"><span>TOTAL ACCOUNTS</span><strong id="totalUsers">0</strong></div>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" id="usersSearch" placeholder="Search users..." oninput="filterUsers()">
+                    </div>
+                    <ul id="user-list" class="request-list"></ul>
+                </div>
+            </section>
+
+            <!-- Student -->
+            <section id="taskManagerView">
+                <!-- View Toggle -->
+                <div class="view-toggle" id="viewToggleSection">
+                    <button class="view-btn active" onclick="setView('list')" id="listViewBtn">List View</button>
+                    <button class="view-btn" onclick="setView('calendar')" id="calendarViewBtn">Calendar View</button>
+                </div>
+
+                <!-- Task Form -->
+                <section class="task-form" id="taskFormSection">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Task title</label>
+                            <input type="text" id="taskInput" placeholder="Example: Work - Client follow-up | Classes - Case study report">
+                        </div>
+                        <div class="input-group">
+                            <label>Category</label>
+                            <select id="categoryInput">
+                                <option value="Classes">Classes</option>
+                                <option value="Work">Work</option>
+                                <option value="Personal">Personal</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Priority</label>
+                            <select id="priorityInput">
+                                <option value="High">High</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Due date & time</label>
+                            <input type="datetime-local" id="dueDateInput">
+                        </div>
+                        <div class="input-group">
+                            <label>Estimated days</label>
+                            <input type="number" id="estDays" value="0" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label>Estimated hours</label>
+                            <input type="number" id="estHours" value="0" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label>Estimated minutes</label>
+                            <input type="number" id="estMinutes" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Notes</label>
+                        <textarea id="notesInput" placeholder="Class section, office shift, links, reminders..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-add" onclick="addTask()">Add Task</button>
+                        <button class="btn btn-clear" onclick="clearCompleted()">Clear Completed</button>
+                    </div>
+                </section>
+
+                <!-- Calendar -->
+                <section class="calendar-view" id="calendarView" style="display: none;">
+                    <div class="calendar-header">
+                        <button class="cal-nav" onclick="prevMonth()">&#8249;</button>
+                        <h3 id="currentMonth"></h3>
+                        <button class="cal-nav" onclick="nextMonth()">&#8250;</button>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                    <div class="calendar-legend">
+                        <span class="legend-item"><span class="dot high"></span> High</span>
+                        <span class="legend-item"><span class="dot med"></span> Medium</span>
+                        <span class="legend-item"><span class="dot low"></span> Low</span>
+                    </div>
+                </section>
+
+                <!-- Stats -->
+                <section class="stats-grid" id="statsSection">
+                    <div class="stat-box"><span>TOTAL</span><strong id="totalStat">0</strong></div>
+                    <div class="stat-box"><span>PENDING</span><strong id="pendingStat">0</strong></div>
+                    <div class="stat-box"><span>COMPLETED</span><strong id="completedStat">0</strong></div>
+                    <div class="stat-box red"><span>OVERDUE</span><strong id="overdueStat">0</strong></div>
+                    <div class="stat-box"><span>DUE TODAY</span><strong id="dueTodayStat">0</strong></div>
+                </section>
+
+                <!-- Filters -->
+                <div class="filters" id="filtersSection">
+                    <button class="filter-pill active" onclick="filterTasks('all')">All</button>
+                    <button class="filter-pill" onclick="filterTasks('pending')">Pending</button>
+                    <button class="filter-pill" onclick="filterTasks('completed')">Completed</button>
+                    <button class="filter-pill" onclick="filterTasks('overdue')">Overdue</button>
+                    <button class="filter-pill" onclick="filterTasks('Classes')">Classes</button>
+                    <button class="filter-pill" onclick="filterTasks('Work')">Work</button>
+                    <button class="filter-pill" onclick="filterTasks('Personal')">Personal</button>
+                </div>
+                <p class="task-count" id="taskCount">0 tasks (0 completed)</p>
+
+                <!-- Task List -->
+                <section class="task-list" id="taskList"></section>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='java.js') }}"></script>
+</body>
+</html>

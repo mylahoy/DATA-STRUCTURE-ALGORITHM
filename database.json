@@ -1,0 +1,10 @@
+{
+    "pending": [],
+    "approved": [
+        {
+            "username": "Acer",
+            "email": "saddsa@gmail.com",
+            "password": "scrypt:32768:8:1$Y9eEQCyAG032VEOn$92e6c64dbe6cd43681886fece5f6a4145a108da611c43aa77ec756c1f8a69c503f90fa04ca6ac5017aa2c42871ed0ebf92918fe4e346c9507ec77e2b4fee31c3"
+        }
+    ]
+}

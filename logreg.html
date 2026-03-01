@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register - TaskMate</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='config.css') }}">
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Header -->
+        <div class="auth-header">
+            <h1>TaskMate</h1>
+            <p class="subtitle">Manage your tasks efficiently</p>
+        </div>
+
+        <div class="auth-cards">
+            <!-- Login -->
+            <div class="form-card login-card">
+                <h2>Login</h2>
+                <p class="card-subtitle">Access your account</p>
+                
+                <label id="user-label">Username</label>
+                <input type="text" id="login-user" placeholder="Enter username">
+                
+                <label id="pass-label">Password</label>
+                <input type="password" id="login-pass" placeholder="Enter password">
+                
+                <div id="pin-field" style="display: none;">
+                    <label>Admin PIN</label>
+                    <input type="password" id="admin-pin" placeholder="Enter Admin PIN">
+                </div>
+                
+                <button type="button" id="admin-btn" class="btn-admin" onclick="toggleAdminMode()">Login as Admin</button>
+                
+                <button class="btn-primary" onclick="handleLogin()">Login</button>
+                
+                <p id="login-msg" style="color: var(--danger); font-size: 0.85rem; margin-top: 10px; text-align: center;"></p>
+            </div>
+
+            <!-- Register -->
+            <div class="form-card register-card">
+                <h2>Register</h2>
+                <p class="card-subtitle">Join as a new student</p>
+                
+                <form id="reg-form">
+                    <label>Username</label>
+                    <input type="text" id="reg-user" placeholder="Choose a username" required>
+                    
+                    <label>Email</label>
+                    <input type="email" id="reg-email" placeholder="student@example.com" required>
+                    
+                    <label>Password</label>
+                    <input type="password" id="reg-pass" placeholder="Create a secure password" required oninput="checkPasswordStrength()">
+                    
+                    <div class="password-strength">
+                        <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+                        <span class="strength-text" id="strength-text"></span>
+                    </div>
+                    <ul class="password-requirements">
+                        <li id="req-length">At least 8 characters</li>
+                        <li id="req-upper">One uppercase letter</li>
+                        <li id="req-lower">One lowercase letter</li>
+                        <li id="req-number">One number</li>
+                        <li id="req-special">One special character (!@#$%^&*)</li>
+                    </ul>
+                    
+                    <label>Confirm Password</label>
+                    <input type="password" id="reg-confirm-pass" placeholder="Confirm your password" required>
+                    
+                    <button type="submit" class="btn-secondary">Signup & Wait for Approval</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='java.js') }}"></script>
+</body>
+</html>
